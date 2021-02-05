@@ -9,10 +9,6 @@ from fritz_persist_status.settings import settings
 
 
 if __name__ == "__main__":
-    if not os.path.isfile(settings.output_file):
-        print('Invalid error file')
-        sys.exit(1)
-
     try:
         status = FritzStatus()
     except FritzConnectionException as e:
