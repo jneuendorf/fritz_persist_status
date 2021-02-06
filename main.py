@@ -1,11 +1,12 @@
 import csv
+from datetime import datetime
 import os.path
 import time
 
 from fritzconnection.lib.fritzstatus import FritzStatus
 from fritzconnection.core.exceptions import FritzConnectionException
 
-from fritz_persist_status.settings import settings
+from fritz_persist_status import settings, map_value
 
 
 if __name__ == "__main__":
@@ -22,8 +23,15 @@ if __name__ == "__main__":
                 writer = csv.writer(output_file)
                 if write_header:
                     write_header = False
-                    writer.writerow(settings.attrs)
-                writer.writerow([getattr(status, attr) for attr in settings.attrs])
+                    writer.writerow(['datetime', *settings.attrs])
+
+                writer.writerow(
+                    [datetime.now().isoformat()]
+                    + [
+                        map_value(getattr(status, attr), attr)
+                        for attr in settings.attrs
+                    ]
+                )
             time.sleep(30)
         except Exception:
             with open(settings.error_file, mode='a+') as error_file:
